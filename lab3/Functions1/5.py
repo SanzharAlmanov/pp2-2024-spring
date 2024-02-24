@@ -1,5 +1,10 @@
 from itertools import permutations
-st = input("input the string you want to permutate - ")
-list1 = list(permutations(st))
-for x in list1:
-  print(x)
+
+def print_permutations():
+    input_string = input("Enter a string: ")
+    perms = permutations(input_string)
+
+    for perm in perms:
+        print(''.join(perm))
+
+print_permutations()

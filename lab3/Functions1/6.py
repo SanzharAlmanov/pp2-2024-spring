@@ -1,5 +1,5 @@
-string = 'abd fre der'
-def Convert(string):
-  li = list(string.split(" "))
+strin = 'abd fre der'
+def Convert(strin):
+  li = list(strin.split(" "))
   print(*li[::-1])
-Convert(string)
+Convert(strin)
