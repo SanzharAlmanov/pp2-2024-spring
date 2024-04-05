@@ -7,8 +7,8 @@ pygame.display.set_caption("Clock")
 
 width, height = 800, 800
 R = min(width, height) // 3
-minute_hand_length = R * 3 // 4
-second_hand_length = R - 10
+ml = R * 3 // 4
+sl = R - 10
 
 running = True
 clock = pygame.time.Clock()
@@ -35,13 +35,13 @@ while running:
     second = current_time % 60
 
     minan = math.radians(360 - (minute + second / 60) * 6)  
-    minx = width // 2 + int(math.cos(minan) * minute_hand_length)
-    miny = height // 2 - int(math.sin(minan) * minute_hand_length)
+    minx = width // 2 + int(math.cos(minan) * ml)
+    miny = height // 2 - int(math.sin(minan) * ml)
     pygame.draw.line(screen, (255, 255, 255), (width // 2, height // 2), (minx, miny), 3)
 
     secan = math.radians(360 - second * 6)
-    secx = width // 2 + int(math.cos(secan) * second_hand_length)
-    secy = height // 2 - int(math.sin(secan) * second_hand_length)
+    secx = width // 2 + int(math.cos(secan) * sl)
+    secy = height // 2 - int(math.sin(secan) * sl)
     pygame.draw.line(screen, (255, 0, 0), (width // 2, height // 2), (secx, secy), 1)
 
     pygame.display.update()
