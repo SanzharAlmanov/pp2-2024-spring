@@ -9,6 +9,6 @@ def cts(ccs):
         scs = scs[1:]
     return scs
 
-ccs = "NFJFjnBJBjbjBJjbbj"
+ccs = "NFJFjnBJ_B__jbjBJjbbj"
 scs = cts(ccs)
 print(scs)

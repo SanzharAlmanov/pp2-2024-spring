@@ -34,15 +34,15 @@ while running:
     minute = (current_time // 60) % 60
     second = current_time % 60
 
-    minute_angle = math.radians(360 - (minute + second / 60) * 6)  
-    minute_hand_x = width // 2 + int(math.cos(minute_angle) * minute_hand_length)
-    minute_hand_y = height // 2 - int(math.sin(minute_angle) * minute_hand_length)
-    pygame.draw.line(screen, (255, 255, 255), (width // 2, height // 2), (minute_hand_x, minute_hand_y), 3)
+    minan = math.radians(360 - (minute + second / 60) * 6)  
+    minx = width // 2 + int(math.cos(minan) * minute_hand_length)
+    miny = height // 2 - int(math.sin(minan) * minute_hand_length)
+    pygame.draw.line(screen, (255, 255, 255), (width // 2, height // 2), (minx, miny), 3)
 
-    second_angle = math.radians(360 - second * 6)
-    second_hand_x = width // 2 + int(math.cos(second_angle) * second_hand_length)
-    second_hand_y = height // 2 - int(math.sin(second_angle) * second_hand_length)
-    pygame.draw.line(screen, (255, 0, 0), (width // 2, height // 2), (second_hand_x, second_hand_y), 1)
+    secan = math.radians(360 - second * 6)
+    secx = width // 2 + int(math.cos(secan) * second_hand_length)
+    secy = height // 2 - int(math.sin(secan) * second_hand_length)
+    pygame.draw.line(screen, (255, 0, 0), (width // 2, height // 2), (secx, secy), 1)
 
     pygame.display.update()
 
