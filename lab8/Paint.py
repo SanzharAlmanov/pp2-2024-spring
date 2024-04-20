@@ -1,81 +1,43 @@
 import pygame
+import sys
 
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((640, 480))
-    clock = pygame.time.Clock()
-    
-    radius = 15
-    x = 0
-    y = 0
-    mode = 'blue'
-    points = []
-    run = 1
-    while run:
-        
-        pressed = pygame.key.get_pressed()
-        
-        alt_held = pressed[pygame.K_LALT] or pressed[pygame.K_RALT]
-        ctrl_held = pressed[pygame.K_LCTRL] or pressed[pygame.K_RCTRL]
-        
-        for event in pygame.event.get():
-            
-            if event.type == pygame.QUIT:
-                run = 0
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = 0 
-            
-                # determine if a letter key was pressed
-                if event.key == pygame.K_r:
-                    mode = 'red'
-                elif event.key == pygame.K_g:
-                    mode = 'green'
-                elif event.key == pygame.K_b:
-                    mode = 'blue'
-            
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    radius = min(200, radius + 1)
-                elif event.button == 3:
-                    radius = max(1, radius - 1)
-            
-            if event.type == pygame.MOUSEMOTION:
-                position = event.pos
-                points = points + [position]
-                points = points[-256:]
-                
-        screen.fill((0, 0, 0))
-        
-        i = 0
-        while i < len(points) - 1:
-            drawLineBetween(screen, i, points[i], points[i + 1], radius, mode)
-            i += 1
-        
-        pygame.display.flip()
-        
-        clock.tick(60)
+pygame.init()
 
-def drawLineBetween(screen, index, start, end, width, color_mode):
-    c1 = max(0, min(255, 2 * index - 256))
-    c2 = max(0, min(255, 2 * index))
-    
-    if color_mode == 'blue':
-        color = (c1, c1, c2)
-    elif color_mode == 'red':
-        color = (c2, c1, c1)
-    elif color_mode == 'green':
-        color = (c1, c2, c1)
-    
-    dx = start[0] - end[0]
-    dy = start[1] - end[1]
-    iterations = max(abs(dx), abs(dy))
-    
-    for i in range(iterations):
-        progress = 1.0 * i / iterations
-        aprogress = 1 - progress
-        x = int(aprogress * start[0] + progress * end[0])
-        y = int(aprogress * start[1] + progress * end[1])
-        pygame.draw.circle(screen, color, (x, y), width)
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Mini Paint")
 
-main()
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+current_color = BLACK
+
+brush_size = 5
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                current_color = RED
+            elif event.key == pygame.K_g:
+                current_color = GREEN
+            elif event.key == pygame.K_b:
+                current_color = BLUE
+            elif event.key == pygame.K_c:
+                screen.fill(WHITE)
+
+    if pygame.mouse.get_pressed()[0]:
+        mouse_pos = pygame.mouse.get_pos()
+        pygame.draw.circle(screen, current_color, mouse_pos, brush_size)
+
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()

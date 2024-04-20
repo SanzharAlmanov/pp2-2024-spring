@@ -1,61 +1,71 @@
 import pygame
-import os
+import sys
+import math
 
-pygame.mixer.init()
+# Initialize Pygame
 pygame.init()
 
-screen = pygame.display.set_mode((480, 248))
-pygame.display.set_caption("Music Player")
+# Set up screen dimensions
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Mini Paint")
 
-# Specify the directory where your music files are stored
-music_dir = r"C:\Users\user\Music"
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
-# Check if the music directory exists
-if not os.path.exists(music_dir):
-    print("Error: Music directory does not exist.")
-    pygame.quit()
-    quit()
+# Set default color
+current_color = BLACK
 
-# Load all music files from the specified directory
-songs = [os.path.join(music_dir, file) for file in os.listdir(music_dir) if file.endswith(".mp3")]
+# Set default brush size
+brush_size = 5
 
-# Check if any music files are found
-if not songs:
-    print("Error: No MP3 files found in the music directory.")
-    pygame.quit()
-    quit()
-
-current_music = 0
-
-# Load and play the first song
-pygame.mixer.music.load(songs[current_music])
-pygame.mixer.music.play()
-
-# Load background image
-background = pygame.image.load(r"C:\Users\user\Downloads\player.png")
-background_rect = background.get_rect()
-
+# Main loop
 running = True
 while running:
+    # Handle events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                if pygame.mixer.music.get_busy():
-                    pygame.mixer.music.stop()
-                else:
-                    pygame.mixer.music.play()
-            elif event.key == pygame.K_RIGHT:
-                current_music = (current_music + 1) % len(songs)
-                pygame.mixer.music.load(songs[current_music])
-                pygame.mixer.music.play()
-            elif event.key == pygame.K_LEFT:
-                current_music = (current_music - 1) % len(songs)
-                pygame.mixer.music.load(songs[current_music])
-                pygame.mixer.music.play()
+            if event.key == pygame.K_r:
+                current_color = RED
+            elif event.key == pygame.K_g:
+                current_color = GREEN
+            elif event.key == pygame.K_b:
+                current_color = BLUE
+            elif event.key == pygame.K_c:
+                screen.fill(WHITE)
 
-    screen.blit(background, (0, 0))
+    # Draw shapes
+    if pygame.mouse.get_pressed()[0]:
+        mouse_pos = pygame.mouse.get_pos()
+        if pygame.key.get_pressed()[pygame.K_s]:  # Draw square
+            pygame.draw.rect(screen, current_color, (mouse_pos[0] - brush_size // 2, mouse_pos[1] - brush_size // 2, brush_size, brush_size))
+        elif pygame.key.get_pressed()[pygame.K_t]:  # Draw right triangle
+            pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - brush_size),
+                                                         (mouse_pos[0] - brush_size, mouse_pos[1]),
+                                                         (mouse_pos[0], mouse_pos[1])])
+        elif pygame.key.get_pressed()[pygame.K_e]:  # Draw equilateral triangle
+            side_length = brush_size * math.sqrt(3)
+            pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - side_length),
+                                                         (mouse_pos[0] - brush_size, mouse_pos[1] + brush_size),
+                                                         (mouse_pos[0] + brush_size, mouse_pos[1] + brush_size)])
+        elif pygame.key.get_pressed()[pygame.K_r]:  # Draw rhombus
+            pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - brush_size),
+                                                         (mouse_pos[0] - brush_size, mouse_pos[1]),
+                                                         (mouse_pos[0], mouse_pos[1] + brush_size),
+                                                         (mouse_pos[0] + brush_size, mouse_pos[1])])
+        else:  # Draw circle (default)
+            pygame.draw.circle(screen, current_color, mouse_pos, brush_size)
+
+    # Update the screen
     pygame.display.flip()
 
+# Quit Pygame
 pygame.quit()
+sys.exit()

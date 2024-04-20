@@ -1,133 +1,61 @@
 import pygame
+import sys
+import math
 
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((640, 480))
-    clock = pygame.time.Clock()
+pygame.init()
 
-    radius = 15
-    x = 0
-    y = 0
-    mode = 'blue'
-    points = []
-    black_points = []
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Mini Paint")
 
-    isrect = False
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
-    while True:
+current_color = BLACK
 
-        pressed = pygame.key.get_pressed()
+brush_size = 5
 
-        alt_held = pressed[pygame.K_LALT] or pressed[pygame.K_RALT]
-        ctrl_held = pressed[pygame.K_LCTRL] or pressed[pygame.K_RCTRL]
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                current_color = RED
+            elif event.key == pygame.K_g:
+                current_color = GREEN
+            elif event.key == pygame.K_b:
+                current_color = BLUE
+            elif event.key == pygame.K_c:
+                screen.fill(WHITE)
 
-        for event in pygame.event.get():
+    if pygame.mouse.get_pressed()[0]:
+        mouse_pos = pygame.mouse.get_pos()
+        if pygame.key.get_pressed()[pygame.K_s]:  
+            pygame.draw.rect(screen, current_color, (mouse_pos[0] - brush_size // 2, mouse_pos[1] - brush_size // 2, brush_size, brush_size))
+        elif pygame.key.get_pressed()[pygame.K_t]:  
+            pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - brush_size),
+                                                         (mouse_pos[0] - brush_size, mouse_pos[1]),
+                                                         (mouse_pos[0], mouse_pos[1])])
+        elif pygame.key.get_pressed()[pygame.K_e]:  
+            side_length = brush_size * math.sqrt(3)
+            pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - side_length),
+                                                         (mouse_pos[0] - brush_size, mouse_pos[1] + brush_size),
+                                                         (mouse_pos[0] + brush_size, mouse_pos[1] + brush_size)])
+        elif pygame.key.get_pressed()[pygame.K_r]:  
+            pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - brush_size),
+                                                         (mouse_pos[0] - brush_size, mouse_pos[1]),
+                                                         (mouse_pos[0], mouse_pos[1] + brush_size),
+                                                         (mouse_pos[0] + brush_size, mouse_pos[1])])
+        else:  
+            pygame.draw.circle(screen, current_color, mouse_pos, brush_size)
 
-            # determin if X was clicked, or Ctrl+W or Alt+F4 was used
-            if event.type == pygame.QUIT:
-                return
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w and ctrl_held:
-                    return
-                if event.key == pygame.K_F4 and alt_held:
-                    return
-                if event.key == pygame.K_ESCAPE:
-                    return
+    pygame.display.flip()
 
-                # determine if a letter key was pressed
-                if event.key == pygame.K_r:
-                    mode = 'red'
-                elif event.key == pygame.K_g:
-                    mode = 'green'
-                elif event.key == pygame.K_b:
-                    mode = 'blue'
-                elif event.key == pygame.K_w:
-                    mode = 'white'
-                elif event.key == pygame.K_y:
-                    mode = 'yellow'
-                elif event.key == pygame.K_p:
-                    mode = 'pink'
-                elif event.key == pygame.K_s:
-                    isrect = True
-                elif event.key == pygame.K_c:
-                    isrect = False
-                elif event.key == pygame.K_BACKSPACE:
-                    points = []
-
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # left click grows radius
-                    radius = min(200, radius + 1)
-                elif event.button == 3:  # right click shrinks radius
-                    radius = max(1, radius - 1)
-
-            if event.type == pygame.MOUSEMOTION:
-                # if mouse moved, add point to list
-                position = event.pos
-                points = points + [position]
-                points = points[-256:]
-
-        screen.fill((0, 0, 0))
-
-        # draw all points
-        i = 0
-        while i < len(points) - 1:
-            if isrect:
-                drawLineBetweenAsRactangle(screen, i, points[i], points[i + 1], radius, mode)
-            else:
-                drawLineBetween(screen, i, points[i], points[i + 1], radius, mode)
-            i += 1
-
-        pygame.display.flip()
-
-        clock.tick(60)
-
-
-def drawLineBetween(screen, index, start, end, width, color_mode):
-    c1 = max(0, min(255, 2 * index - 256))
-    c2 = max(0, min(255, 2 * index))
-
-    if color_mode == 'blue':
-        color = (c1, c1, c2)
-    elif color_mode == 'red':
-        color = (c2, c1, c1)
-    elif color_mode == 'green':
-        color = (c1, c2, c1)
-    elif color_mode == 'white':
-        color = (c1, c1, c1)
-    elif color_mode == 'yellow':
-        color = (c2, c2, c1)
-    elif color_mode == 'pink':
-        color = (c2, c1, c2)
-
-    dx = start[0] - end[0]
-    dy = start[1] - end[1]
-    iterations = max(abs(dx), abs(dy))
-
-    for i in range(iterations):
-        progress = 1.0 * i / iterations
-        aprogress = 1 - progress
-        x = int(aprogress * start[0] + progress * end[0])
-        y = int(aprogress * start[1] + progress * end[1])
-        pygame.draw.circle(screen, color, (x, y), width)
-
-
-def drawLineBetweenAsRactangle(screen, index, start, end, width, color_mode):
-    c1 = max(0, min(255, 2 * index - 256))
-    c2 = max(0, min(255, 2 * index))
-
-    if color_mode == 'blue':
-        color = (c1, c1, c2)
-    elif color_mode == 'red':
-        color = (c2, c1, c1)
-    elif color_mode == 'green':
-        color = (c1, c2, c1)
-    elif color_mode == 'white':
-        color = (c1, c1, c1)
-    elif color_mode == 'yellow':
-        color = (c2, c2, c1)
-    elif color_mode == 'pink':
-        color = (c2, c1, c2)
-
-    dx = start[0] - end[0]
-    dy = start[1] - end[1]
+pygame.quit()
+sys.exit()
