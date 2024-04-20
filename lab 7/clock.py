@@ -1,51 +1,44 @@
 import pygame
-import math
+from datetime import datetime
 
 pygame.init()
-screen = pygame.display.set_mode((800, 800))
-pygame.display.set_caption("Clock")
 
-width, height = 800, 800
-R = min(width, height) // 3
-ml = R * 3 // 4
-sl = R - 10
+# Set up screen
+h = 800
+w = 900
+screen = pygame.display.set_mode((w, h))
+pygame.display.set_caption('Salomon')
 
-running = True
-clock = pygame.time.Clock()
-while running:
+img_main = pygame.image.load("MICKEYC.png")
+scaled_img = pygame.transform.scale(img_main, (w, h))
+s = pygame.image.load("f.png")
+f = pygame.image.load("s.png")
+clock_rect = img_main.get_rect(center=(w // 2, h // 2))
+sp = pygame.transform.scale(s,(50,200))
+fp = pygame.transform.scale(f,(80,400))
+
+run = True
+while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            run = False
+    
+    curtime = datetime.now().time()
+    sec_angle = -curtime.second * 6  
+    min_angle = -(curtime.minute * 6 + curtime.second / 10)  
+    
+    sec_rot = pygame.transform.rotate(fp, sec_angle)
+    min_rot = pygame.transform.rotate(sp, min_angle)
 
-    screen.fill((0, 0, 0))
-
-    pygame.draw.circle(screen, (255, 255, 255), (width // 2, height // 2), R, 4)
-
-    for num in range(1, 13):
-        angle = math.radians(90 - num * 30)  
-        num_x = width // 2 + int(math.cos(angle) * R * 0.85)
-        num_y = height // 2 - int(math.sin(angle) *R * 0.85)
-        font = pygame.font.Font(None, 36)
-        number_text = font.render(str(num), True, (255, 255, 255))
-        num_rect = number_text.get_rect(center=(num_x, num_y))
-        screen.blit(number_text, num_rect)
-
-    current_time = pygame.time.get_ticks() // 1000
-    minute = (current_time // 60) % 60
-    second = current_time % 60
-
-    minan = math.radians(360 - (minute + second / 60) * 6)  
-    minx = width // 2 + int(math.cos(minan) * ml)
-    miny = height // 2 - int(math.sin(minan) * ml)
-    pygame.draw.line(screen, (255, 255, 255), (width // 2, height // 2), (minx, miny), 3)
-
-    secan = math.radians(360 - second * 6)
-    secx = width // 2 + int(math.cos(secan) * sl)
-    secy = height // 2 - int(math.sin(secan) * sl)
-    pygame.draw.line(screen, (255, 0, 0), (width // 2, height // 2), (secx, secy), 1)
-
+    sec_rect = sec_rot.get_rect(center=clock_rect.center)
+    min_rect = min_rot.get_rect(center=clock_rect.center)
+    
+    screen.fill((255, 255, 255))
+    
+    screen.blit(scaled_img, (0, 0))
+    screen.blit(sec_rot, sec_rect)
+    screen.blit(min_rot, min_rect)
+    
     pygame.display.update()
-
-    clock.tick(60)
 
 pygame.quit()

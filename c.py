@@ -1,73 +1,63 @@
 import pygame
+from datetime import datetime
 import math
 
-# Initialize Pygame
 pygame.init()
 
-# Set the width and height of the screen (window)
-width, height = 400, 400
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Analog Clock")
+# Set up screen
+h = 800
+w = 900
+screen = pygame.display.set_mode((w, h))
+pygame.display.set_caption('Salomon')
 
-# Define colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+# Load images
+img_main = pygame.image.load("MICKEYC.png")
+scaled_img = pygame.transform.scale(img_main, (w, h))
+s = pygame.image.load("f.png").convert_alpha()
+f = pygame.image.load("s.png").convert_alpha()
+ns = pygame.transform.scale(s, (40, 300))
+nf = pygame.transform.scale(f, (80, 200))
 
-# Define clock parameters
-clock_radius = min(width, height) // 3
-minute_hand_length = clock_radius * 3 // 4
-second_hand_length = clock_radius - 10
+# Set initial positions
+center_x = w // 2
+center_y = h // 2
 
-# Define font
-font = pygame.font.Font(None, 24)
-
-# Main loop
-running = True
-clock = pygame.time.Clock()
-while running:
-    # Event handling
+# Game loop
+run = True
+while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-
-    # Clear the screen
-    screen.fill(WHITE)
+            run = False
 
     # Get current time
-    current_time = pygame.time.get_ticks() // 1000  # Get elapsed time in seconds
-    hour = current_time // 3600 % 12
-    minute = (current_time // 60) % 60
-    second = current_time % 60
+    current_time = datetime.now()
+    seconds = current_time.second
+    minutes = current_time.minute
+    hours = current_time.hour % 12  # 12-hour format
+    
+    # Calculate angles for hands
+    seconds_angle = math.radians(6 * seconds)  # 360 degrees / 60 seconds = 6 degrees per second
+    minutes_angle = math.radians(6 * minutes + 0.1 * seconds)  # 360 degrees / 60 minutes = 6 degrees per minute
+    hours_angle = math.radians(30 * hours + 0.5 * minutes)  # 360 degrees / 12 hours = 30 degrees per hour
 
-    # Draw clock face
-    pygame.draw.circle(screen, BLACK, (width // 2, height // 2), clock_radius, 2)
+    # Rotate images
+    rotated_nf = pygame.transform.rotate(nf, math.degrees(seconds_angle))
+    rotated_ns = pygame.transform.rotate(ns, math.degrees(hours_angle))
 
-    # Draw numbers
-    for num in range(1, 13):
-        angle = math.radians(90 - num * 30)  # Adjust the angle calculation for clockwise direction
-        num_x = width // 2 + int(math.cos(angle) * clock_radius * 0.85)
-        num_y = height // 2 - int(math.sin(angle) * clock_radius * 0.85)
-        number_text = font.render(str(num), True, BLACK)
-        num_rect = number_text.get_rect(center=(num_x, num_y))
-        screen.blit(number_text, num_rect)
+    # Calculate positions
+    nf_x = center_x - rotated_nf.get_width() // 2
+    nf_y = center_y - rotated_nf.get_height() + 20  # Adjusted to align with the center
+    ns_x = center_x - rotated_ns.get_width() // 2
+    ns_y = center_y - rotated_ns.get_height() + 50  # Adjusted to align with the center
 
-    # Draw minute hand
-    minute_angle = math.radians((minute + second / 60) * 6)  # adjusted for seconds
-    minute_hand_x = width // 2 + int(math.cos(minute_angle) * minute_hand_length)
-    minute_hand_y = height // 2 - int(math.sin(minute_angle) * minute_hand_length)
-    pygame.draw.line(screen, BLACK, (width // 2, height // 2), (minute_hand_x, minute_hand_y), 3)
+    # Clear screen
+    screen.fill((255, 255, 255))
 
-    # Draw second hand
-    second_angle = math.radians(second * 6)
-    second_hand_x = width // 2 + int(math.cos(second_angle) * second_hand_length)
-    second_hand_y = height // 2 - int(math.sin(second_angle) * second_hand_length)
-    pygame.draw.line(screen, BLACK, (width // 2, height // 2), (second_hand_x, second_hand_y), 1)
+    # Blit images
+    screen.blit(scaled_img, (0, 0))
+    screen.blit(rotated_nf, (nf_x, nf_y))
+    screen.blit(rotated_ns, (ns_x, ns_y))
 
-    # Update the display
     pygame.display.update()
 
-    # Cap the frame rate
-    clock.tick(60)
-
-# Quit Pygame
 pygame.quit()

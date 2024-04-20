@@ -1,48 +1,33 @@
-import pygame
-import sys
+import pygame 
+import math
 
 pygame.init()
-
-WIDTH, HEIGHT = 600, 400
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Moving")
-
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-
-R = 25 
-bx = WIDTH // 2 
-by = HEIGHT // 2  
-v = 20  
-
-running = True
-while running:
+w,h = 900,650
+pygame.display.set_caption("Salomon")
+screen = pygame.display.set_mode((w,h))
+cx = w // 2
+cy = h // 2
+run = 1
+while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            run = 0
+            print("Finished")
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                by -= v
-            elif event.key == pygame.K_DOWN:
-                by += v
-            elif event.key == pygame.K_LEFT:
-                bx -= v
-            elif event.key == pygame.K_RIGHT:
-                bx += v
-    if bx - R < 0:
-        bx = R
-    elif bx + R > WIDTH:
-        bx = WIDTH - R
-    if by - R < 0:
-        by = R
-    elif by + R > HEIGHT:
-        by = HEIGHT - R
-
-    screen.fill(WHITE)
-
-    pygame.draw.circle(screen, RED, (bx, by), R)
-
-    pygame.display.flip()
-
+            if event.key == pygame.K_d:
+                if cx + 25 < w:
+                    cx += 25
+            elif event.key == pygame.K_a:
+                if cx - 25 > 0:
+                    cx -= 25
+            elif event.key == pygame.K_w:
+                if cy - 25 > 0:
+                    cy -= 25
+            elif event.key == pygame.K_s:
+                if cy + 25 < h:
+                    cy +=25  
+    pygame.draw.circle(screen,(236,43,43),(cx, cy), 25,25)
+    
+    pygame.display.update()
+    screen.fill((255,255,255))
 pygame.quit()
-sys.exit()
