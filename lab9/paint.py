@@ -47,7 +47,7 @@ while running:
             pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - side_length),
                                                          (mouse_pos[0] - brush_size, mouse_pos[1] + brush_size),
                                                          (mouse_pos[0] + brush_size, mouse_pos[1] + brush_size)])
-        elif pygame.key.get_pressed()[pygame.K_r]:  
+        elif pygame.key.get_pressed()[pygame.K_y]:  
             pygame.draw.polygon(screen, current_color, [(mouse_pos[0], mouse_pos[1] - brush_size),
                                                          (mouse_pos[0] - brush_size, mouse_pos[1]),
                                                          (mouse_pos[0], mouse_pos[1] + brush_size),
@@ -56,6 +56,3 @@ while running:
             pygame.draw.circle(screen, current_color, mouse_pos, brush_size)
 
     pygame.display.flip()
-
-pygame.quit()
-sys.exit()

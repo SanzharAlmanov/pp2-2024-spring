@@ -1,6 +1,6 @@
 import pygame
 import os
-
+ 
 pygame.mixer.init()
 pygame.init()
 
@@ -27,7 +27,7 @@ paused = False
 pygame.mixer.music.load(songs[current_music])
 pygame.mixer.music.play()
 
-background = pygame.image.load("C:\\Users\\user\\Downloads\\player.png")
+#background = pygame.image.load("C:\\Users\\user\\Downloads\\player.png")
 
 run = True
 while run:
@@ -52,7 +52,7 @@ while run:
                 pygame.mixer.music.load(songs[current_music])
                 pygame.mixer.music.play()
 
-    screen.blit(background, (0, 0))
+    #screen.blit(background, (0, 0))
     pygame.display.flip()
 
 pygame.quit()

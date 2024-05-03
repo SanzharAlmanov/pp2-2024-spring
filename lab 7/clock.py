@@ -14,8 +14,8 @@ scaled_img = pygame.transform.scale(img_main, (w, h))
 s = pygame.image.load("f.png")
 f = pygame.image.load("s.png")
 clock_rect = img_main.get_rect(center=(w // 2, h // 2))
-sp = pygame.transform.scale(s,(50,200))
-fp = pygame.transform.scale(f,(80,400))
+sp = pygame.transform.scale(s,(70,200))
+fp = pygame.transform.scale(f,(65,400))
 
 run = True
 while run:
@@ -41,4 +41,3 @@ while run:
     
     pygame.display.update()
 
-pygame.quit()
